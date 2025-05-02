@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Main - H&H Snacks and More</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <img src="images/logo.jpg" alt="H&H Logo" class="logo-large">
+    <h2>H&H Snacks and More</h2>
+  </header>
+  <main id="mainPage">
+    <h3>Menu</h3>
+    <div id="menuList" class="card-container"></div>
+    <button id="calculateBtn" class="btn btn-primary">Calculate Total</button>
+    <div id="totalDisplay" class="total-display"></div>
+    <button id="printInvoice" class="btn btn-secondary hidden">Print Invoice</button>
+
+    <div id="invoice" class="invoice-card"></div>
+
+    <section id="history" class="history-section">
+      <h3>Sales History</h3>
+      <div class="history-controls">
+        <input type="month" id="monthFilter">
+        <button id="downloadHistory" class="btn btn-primary">Download History</button>
+        <button id="clearHistory" class="btn btn-danger">Clear History</button>
+      </div>
+      <table class="history-table">
+        <thead><tr><th>Order#</th><th>Menu</th><th>Qty</th><th>Date</th><th>Time</th><th>Cashier</th></tr></thead>
+        <tbody id="historyBody"></tbody>
+      </table>
+    </section>
+  </main>
+  <footer>
+    <p>Powered: Abdurrahman CodeVerge Technology LTD | +234 810 790 7647</p>
+    <p>&copy; 2025 H&H Snacks and More</p>
+  </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

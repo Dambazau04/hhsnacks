@@ -1,0 +1,11 @@
+body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+.page { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+.hidden { display: none; }
+.error { color: red; }
+.slideshow { position: relative; width: 100%; height: 100%; overflow: hidden; }
+.slide { position: absolute; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1s; }
+.slide.active { opacity: 1; }
+.invoice.a6 { width: 105mm; height: 148mm; padding: 10mm; position: relative; }
+.watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.1; font-size: 3em; }
+#history-table { width: 90%; border-collapse: collapse; }
+#history-table th, #history-table td { border: 1px solid #333; padding: 4px; }

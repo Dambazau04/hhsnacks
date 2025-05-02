@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header><h1>Admin Dashboard</h1></header>
+  <main class="admin-page">
+    <section class="card">
+      <h2>Manage Cashiers</h2>
+      <div id="cashierList"></div>
+      <input type="text" id="newCashierUser" placeholder="Username (e.g. H&H2026)">
+      <input type="password" id="newCashierPass" placeholder="Password">
+      <input type="text" id="newCashierName" placeholder="Full Name">
+      <button id="addCashier" class="btn btn-primary">Add Cashier</button>
+    </section>
+    <section class="card">
+      <h2>Manage Menu</h2>
+      <div id="menuAdminList"></div>
+      <input type="text" id="menuName" placeholder="Item Name">
+      <input type="number" id="menuPrice" placeholder="Price">
+      <button id="addMenuItem" class="btn btn-secondary">Add Menu Item</button>
+    </section>
+    <section class="card">
+      <h2>History</h2>
+      <input type="month" id="histMonth">
+      <button id="downloadHistAdmin" class="btn btn-primary">Download</button>
+      <button id="clearHistAdmin" class="btn btn-danger">Clear</button>
+      <div id="adminHistory"></div>
+    </section>
+  </main>
+  <footer><p>&copy; 2025 H&H Snacks and More</p></footer>
+  <script>
+    // Ensure admin role
+    if (sessionStorage.getItem('role')!=='admin') window.location.href='login-admin.html';
+    // Data stores
+    let cashiers = JSON.parse(localStorage.getItem('cashiers')||'[]');
+    let menus = JSON.parse(localStorage.getItem('menus')||JSON.stringify([{name:'Burger',price:1500},{name:'Fries',price:800},{name:'Soda',price:300}]));
+    let history = JSON.parse(localStorage.getItem('salesHistory')||'[]');
+    const el = id=>document.getElementById(id);
+    // Render lists
+    function renderCashiers(){
+      el('cashierList').innerHTML = cashiers.map((c,i)=>
+        `<div>${c.name} <button data-i='${i}' class='removeCashier btn btn-danger small'>Remove</button></div>`).join('');
+      document.querySelectorAll('.removeCashier').forEach(b=>b.onclick=e=>{
+        cashiers.splice(e.target.dataset.i,1);
+        localStorage.setItem('cashiers',JSON.stringify(cashiers)); renderCashiers();
+      });
+    }
+    function renderMenuAdmin(){
+      el('menuAdminList').innerHTML = menus.map((m,i)=>
+        `<div>${m.name} (₦${m.price}) <button data-i='${i}' class='removeMenu btn btn-danger small'>Remove</button></div>`).join('');
+      document.querySelectorAll('.removeMenu').forEach(b=>b.onclick=e=>{
+        menus.splice(e.target.dataset.i,1);
+        localStorage.setItem('menus',JSON.stringify(menus)); renderMenuAdmin();
+      });
+    }
+    function renderHistoryAdmin(filter){
+      let out = history.filter(h=>!filter||h.date.startsWith(filter)).map(h=>
+        `<div class='hist-item'><strong>${h.orderNo}</strong> ${h.date} ${h.time} by ${h.cashier}</div>`).join('');
+      el('adminHistory').innerHTML = out;
+    }
+    // Initial render
+    renderCashiers(); renderMenuAdmin(); renderHistoryAdmin();
+    // Add cashier
+    el('addCashier').onclick = () => {
+      const u=el('newCashierUser').value,p=el('newCashierPass').value,n=el('newCashierName').value;
+      if(u&&p&&n){ cashiers.push({user:u,pass:p,name:n}); localStorage.setItem('cashiers',JSON.stringify(cashiers)); renderCashiers(); }
+    };
+    // Add menu item
+    el('addMenuItem').onclick = () => {
+      const n=el('menuName').value,p=+el('menuPrice').value;
+      if(n&&p){ menus.push({name:n,price:p}); localStorage.setItem('menus',JSON.stringify(menus)); renderMenuAdmin(); }
+    };
+    // Download/Clear history
+    el('downloadHistAdmin').onclick = () => {
+      const m=el('histMonth').value; let csv='Order#,Item,Qty,Date,Time,Cashier\n';
+      history.filter(h=>!m||h.date.startsWith(m)).forEach(h=>h.items.forEach(i=>csv+=`${h.orderNo},${i.name},${i.qty},${h.date},${h.time},${h.cashier}\n`));
+      const blob=new Blob([csv],{type:'text/csv'}),url=URL.createObjectURL(blob);
+      const a=document.createElement('a');a.href=url;a.download='sales_history.csv';a.click();URL.revokeObjectURL(url);
+    };
+    el('clearHistAdmin').onclick = () => {
+      if(confirm('Clear all history?')){ history=[];localStorage.removeItem('salesHistory'); renderHistoryAdmin(); }
+    };
+    // Pass menus to main page
+    localStorage.setItem('menus', JSON.stringify(menus));
+  </script>
+</body>
+</html>
